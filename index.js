@@ -16,77 +16,52 @@ import leadRoutes from "./routes/lead.routes.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// CORS Configuration
+const corsOptions = {
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
 // Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    credentials: true,
-  })
-);
-
-// Request logging middleware
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.url}`, {
-    ip: req.ip,
-    userAgent: req.get("user-agent"),
-  });
-  next();
-});
 
 // Routes
-app.use("/auth", authRoutes);
-app.use("/contact", contactRoutes);
-app.use("/portfolio", portfolioRoutes);
-app.use("/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/portfolio", portfolioRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/leads", leadRoutes);
 
-// Health check route
-app.get("/health", (req, res) => {
-  logger.info("Health check performed");
-  res.status(200).json({
-    status: "success",
-    message: "Server is running",
-    timestamp: new Date(),
+// Welcome route
+app.get("/", (req, res) => {
+  res.json({
+    message: "Welcome to NexusGen Technologies API",
+    status: "Server is running",
+    version: "1.0.0",
   });
 });
 
-// Error handling middleware
-app.use((err, req, res) => {
-  logger.error("Error occurred:", {
-    error: err.message,
-    stack: err.stack,
-    path: req.path,
-    method: req.method,
-  });
+// Start server
+const PORT = process.env.PORT || 3000;
 
-  res.status(err.statusCode || 500).json({
-    success: false,
-    message: err.message || "Internal Server Error",
-    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-  });
-});
-
-// Connect to MongoDB and start server
-connectDB()
-  .then(() => {
+const startServer = async () => {
+  try {
+    await connectDB();
     app.listen(PORT, () => {
       logger.info(`🚀 Server running on port ${PORT}`);
     });
-  })
-  .catch((error) => {
-    logger.error("Failed to connect to database:", error);
+  } catch (error) {
+    logger.error("Failed to start server:", error);
     process.exit(1);
-  });
+  }
+};
 
-// Handle uncaught exceptions
-process.on("uncaughtException", (error) => {
-  logger.error("Uncaught Exception:", error);
-  process.exit(1);
-});
+startServer();
 
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (error) => {

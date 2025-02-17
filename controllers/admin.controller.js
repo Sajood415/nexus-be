@@ -1,6 +1,7 @@
 import User from "../models/User.model.js";
 import { createError } from "../utils/error.js";
 import { generateToken } from "../utils/token.js";
+import Lead from "../models/Lead.model.js";
 
 export const adminLogin = async (req, res, next) => {
   try {
@@ -44,14 +45,12 @@ export const adminLogin = async (req, res, next) => {
 
 export const getDashboardStats = async (req, res, next) => {
   try {
-    const totalUsers = await User.countDocuments({ role: "user" });
-    // Add more stats as needed
+    const totalLeads = await Lead.countDocuments();
 
     res.status(200).json({
       success: true,
       stats: {
-        totalUsers,
-        // Add more stats
+        totalLeads,
       },
     });
   } catch (error) {
