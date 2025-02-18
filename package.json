@@ -8,7 +8,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest",
-    "build": "npm install && npm run start"
+    "build": "npm install"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
