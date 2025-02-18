@@ -51,10 +51,24 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    await connectDB();
-    app.listen(PORT, "0.0.0.0", () => {
-      logger.info(`🚀 Server running on port ${PORT}`);
-    });
+    // Set a timeout for MongoDB connection
+    const connectWithRetry = async (retries = 5) => {
+      try {
+        await connectDB();
+        app.listen(PORT, "0.0.0.0", () => {
+          logger.info(`🚀 Server running on port ${PORT}`);
+        });
+      } catch (error) {
+        if (retries > 0) {
+          logger.info(`Retrying connection... ${retries} attempts left`);
+          await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+          return connectWithRetry(retries - 1);
+        }
+        throw error;
+      }
+    };
+
+    await connectWithRetry();
   } catch (error) {
     logger.error("Failed to start server:", error);
     process.exit(1);
