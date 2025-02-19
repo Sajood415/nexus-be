@@ -35,8 +35,8 @@ app.use("/admin", adminRoutes); // For backward compatibility
 app.use("/api/admin", adminRoutes); // New standard route
 
 // Routes
+app.use("/api/contacts", contactRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/contact", contactRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/leads", leadRoutes);
 
