@@ -7,8 +7,12 @@ import { protect, restrictTo } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// Admin routes
-router.post("/login", adminLogin); // This will handle /admin/login
-router.get("/dashboard/stats", protect, restrictTo("admin"), getDashboardStats);
+// Public routes
+router.post("/login", adminLogin);
+
+// Protected admin routes
+router.use(protect);
+router.use(restrictTo("admin"));
+router.get("/stats", getDashboardStats);
 
 export default router;
