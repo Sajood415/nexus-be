@@ -37,3 +37,35 @@ export const getContacts = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateContactStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return next(createError(400, "Status is required"));
+    }
+
+    const contact = await Contact.findById(id);
+
+    if (!contact) {
+      return next(createError(404, "Contact not found"));
+    }
+
+    if (!["pending", "in-progress", "resolved"].includes(status)) {
+      return next(createError(400, "Invalid status value"));
+    }
+
+    contact.status = status;
+    await contact.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Contact status updated successfully",
+      contact,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
