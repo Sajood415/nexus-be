@@ -32,9 +32,9 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/portfolio", portfolioRoutes);
-app.use("/admin", adminRoutes);
 app.use("/api/leads", leadRoutes);
 
 // Welcome route

@@ -13,6 +13,6 @@ router.post("/login", adminLogin);
 // Protected admin routes
 router.use(protect);
 router.use(restrictTo("admin"));
-router.get("/stats", getDashboardStats);
+router.get("/dashboard/stats", getDashboardStats);
 
 export default router;
