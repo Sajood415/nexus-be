@@ -34,7 +34,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/portfolio", portfolioRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/admin", adminRoutes);
 app.use("/api/leads", leadRoutes);
 
 // Welcome route
