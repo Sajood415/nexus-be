@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
@@ -11,23 +12,27 @@ import contactRoutes from "./routes/contact.routes.js";
 import portfolioRoutes from "./routes/portfolio.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import leadRoutes from "./routes/lead.routes.js";
+import jobRoutes from "./routes/job.routes.js";
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 
+// Configure body-parser first, before any other middleware
+app.use(bodyParser.json({ limit: "100mb" }));
+app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
+
 // CORS Configuration
 const corsOptions = {
-  origin: true, // Allow all origins
+  origin: true,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-// Middleware
+// Other middleware
 app.use(cors(corsOptions));
-app.use(express.json());
 app.use(cookieParser());
 
 // Support both old and new routes
@@ -39,6 +44,7 @@ app.use("/api/contacts", contactRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/leads", leadRoutes);
+app.use("/api/jobs", jobRoutes);
 
 // Welcome route
 app.get("/", (req, res) => {
